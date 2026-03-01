@@ -34,18 +34,27 @@ function PlotManager.init()
         return
     end
 
-    -- Register all plots
-    for _, plotModel in ipairs(plotFolder:GetChildren()) do
-        if plotModel:IsA("Model") then
-            local plotId = plotModel:GetAttribute("PlotId")
+    local function registerPlot(child: Instance)
+        if child:IsA("Model") then
+            local plotId = child:GetAttribute("PlotId")
             if plotId then
-                plotRegistry[plotId] = nil
-                generatorModels[plotId] = {}
+                plotRegistry[plotId] = plotRegistry[plotId]  -- keep existing occupant if any
+                if not generatorModels[plotId] then
+                    generatorModels[plotId] = {}
+                end
             end
         end
     end
 
-    print("[PlotManager] Registered", #plotFolder:GetChildren(), "plots.")
+    -- Register plots already present
+    for _, child in ipairs(plotFolder:GetChildren()) do
+        registerPlot(child)
+    end
+
+    -- Catch plots created later by the setup script (race condition)
+    plotFolder.ChildAdded:Connect(registerPlot)
+
+    print("[PlotManager] Plot watcher started.")
 end
 
 -- ============================================================

@@ -192,13 +192,21 @@ function PlotVisuals.init()
 		return
 	end
 
-	for _, child in ipairs(plotsFolder:GetChildren()) do
-		if child:IsA("Model") then
+	local function tryDecorate(child: Instance)
+		if child:IsA("Model") and child:GetAttribute("PlotId") then
 			decoratePlot(child :: Model)
 		end
 	end
 
-	print("[PlotVisuals] Decorated", #plotsFolder:GetChildren(), "plots.")
+	-- Decorate plots already present
+	for _, child in ipairs(plotsFolder:GetChildren()) do
+		tryDecorate(child)
+	end
+
+	-- Decorate plots created later by the setup script (race condition)
+	plotsFolder.ChildAdded:Connect(tryDecorate)
+
+	print("[PlotVisuals] Plot watcher started.")
 end
 
 --- Update sign to show owner name (green) and tint base dark-green.
