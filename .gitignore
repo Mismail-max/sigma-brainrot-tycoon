@@ -1,0 +1,21 @@
+# Rojo / Roblox
+*.rbxlx
+*.rbxl
+*.rbxm
+*.rbxmx
+
+# Rojo build artifacts
+build/
+
+# VS Code
+.vscode/
+
+# Claude Code internal
+.claude/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Node (if any tooling added later)
+node_modules/
