@@ -22,6 +22,8 @@ local MonetizationManager = require(script.Parent.MonetizationManager)
 
 -- 3. Initialize systems
 PlotManager.init()
+local PlotVisuals = require(script.Parent.PlotVisuals)
+PlotVisuals.init()
 GeneratorManager.init()
 LeaderboardManager.init()
 MonetizationManager.init()

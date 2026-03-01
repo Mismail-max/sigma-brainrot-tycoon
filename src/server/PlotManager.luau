@@ -95,33 +95,12 @@ local function spawnGeneratorModel(plotId: number, genTypeId: string, instanceKe
     local genDef = GeneratorData.ByTypeId[genTypeId]
     local modelTemplate = game.ReplicatedStorage:FindFirstChild(genDef and genDef.ModelName or "")
 
+    local GeneratorModels = require(script.Parent.GeneratorModels)
     local genModel: Model
     if modelTemplate and modelTemplate:IsA("Model") then
         genModel = modelTemplate:Clone()
     else
-        -- Fallback: create a simple placeholder model
-        genModel = Instance.new("Model")
-        genModel.Name = genTypeId
-        local part = Instance.new("Part")
-        part.Name    = "HitBox"
-        part.Size    = Vector3.new(4, 4, 4)
-        part.Anchored = true
-        part.BrickColor = BrickColor.new("Bright blue")
-        part.Parent  = genModel
-        genModel.PrimaryPart = part
-
-        local label = Instance.new("BillboardGui")
-        label.Size  = UDim2.new(0, 120, 0, 40)
-        label.StudsOffset = Vector3.new(0, 3, 0)
-        label.AlwaysOnTop = false
-        local tl = Instance.new("TextLabel")
-        tl.Size       = UDim2.new(1, 0, 1, 0)
-        tl.Text       = (genDef and genDef.Name or genTypeId) .. " Lv" .. level
-        tl.TextScaled = true
-        tl.BackgroundTransparency = 1
-        tl.TextColor3 = Color3.new(1, 1, 1)
-        tl.Parent     = label
-        label.Parent  = part
+        genModel = GeneratorModels.build(genTypeId, level)
     end
 
     -- Position near the SpawnArea; offset by index to avoid overlap
@@ -181,6 +160,8 @@ function PlotManager.assignPlot(player: Player)
     end
 
     print("[PlotManager] Assigned plot", plotId, "to", player.Name)
+    local PlotVisuals = require(script.Parent.PlotVisuals)
+    PlotVisuals.updatePlotClaimed(plotId, player.Name)
 end
 
 --- Release a player's plot on leave.
@@ -197,6 +178,8 @@ function PlotManager.releasePlot(player: Player)
             end
             generatorModels[plotId] = {}
         end
+        local PlotVisuals = require(script.Parent.PlotVisuals)
+        PlotVisuals.updatePlotReleased(plotId)
         plotRegistry[plotId] = nil
     end
 end
