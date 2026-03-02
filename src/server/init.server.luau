@@ -11,18 +11,20 @@ RemoteDefinitions.initServer()
 print("[Server] Remotes created.")
 
 -- 2. Load managers in dependency order
-local DataManager        = require(script.Parent.DataManager)
-local PlotManager        = require(script.Parent.PlotManager)
-local GeneratorManager   = require(script.Parent.GeneratorManager)
-local GachaManager       = require(script.Parent.GachaManager)
-local StealManager       = require(script.Parent.StealManager)
-local RebirthManager     = require(script.Parent.RebirthManager)
-local LeaderboardManager = require(script.Parent.LeaderboardManager)
-local MonetizationManager = require(script.Parent.MonetizationManager)
+-- Note: in init.server.luau, `script` IS the Server container,
+-- so managers (its children) are accessed via `script.XXX`, not `script.Parent.XXX`.
+local DataManager        = require(script.DataManager)
+local PlotManager        = require(script.PlotManager)
+local GeneratorManager   = require(script.GeneratorManager)
+local GachaManager       = require(script.GachaManager)
+local StealManager       = require(script.StealManager)
+local RebirthManager     = require(script.RebirthManager)
+local LeaderboardManager = require(script.LeaderboardManager)
+local MonetizationManager = require(script.MonetizationManager)
 
 -- 3. Initialize systems
 PlotManager.init()
-local PlotVisuals = require(script.Parent.PlotVisuals)
+local PlotVisuals = require(script.PlotVisuals)
 PlotVisuals.init()
 GeneratorManager.init()
 LeaderboardManager.init()
