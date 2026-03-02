@@ -14,8 +14,10 @@ local PlotManager = {}
 -- ============================================================
 -- INTERNAL STATE
 -- ============================================================
--- plotRegistry[plotId] = Player | nil
-local plotRegistry: { [number]: Player? } = {}
+-- plotRegistry[plotId] = Player (occupied) | false (free)
+-- NOTE: nil is never stored — Lua drops nil keys from tables,
+-- so `false` is used as the "unoccupied" sentinel.
+local plotRegistry: { [number]: Player | boolean } = {}
 
 -- generatorModels[plotId] = { [instanceKey] = Model }
 local generatorModels: { [number]: { [string]: Model } } = {}
@@ -38,7 +40,10 @@ function PlotManager.init()
         if child:IsA("Model") then
             local plotId = child:GetAttribute("PlotId")
             if plotId then
-                plotRegistry[plotId] = plotRegistry[plotId]  -- keep existing occupant if any
+                -- Only initialise if not already tracked (preserve occupant on re-register)
+                if plotRegistry[plotId] == nil then
+                    plotRegistry[plotId] = false  -- false = unoccupied
+                end
                 if not generatorModels[plotId] then
                     generatorModels[plotId] = {}
                 end
@@ -74,7 +79,7 @@ end
 --- Find the first unoccupied plot.
 local function findFreePlot(): number?
     for plotId, occupant in pairs(plotRegistry) do
-        if occupant == nil then
+        if occupant == false then
             return plotId
         end
     end
@@ -149,7 +154,7 @@ function PlotManager.assignPlot(player: Player)
 
     -- Try to reuse the player's saved plot
     local plotId = data.PlotId
-    if plotId == 0 or plotRegistry[plotId] ~= nil then
+    if plotId == 0 or plotRegistry[plotId] ~= false then
         plotId = findFreePlot()
     end
 
@@ -189,7 +194,7 @@ function PlotManager.releasePlot(player: Player)
         end
         local PlotVisuals = require(script.Parent.PlotVisuals)
         PlotVisuals.updatePlotReleased(plotId)
-        plotRegistry[plotId] = nil
+        plotRegistry[plotId] = false  -- mark as free again
     end
 end
 
