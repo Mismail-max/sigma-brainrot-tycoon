@@ -50,7 +50,7 @@ end
 local function addLabel(part: Part, title: string, levelText: string)
 	local bb = Instance.new("BillboardGui")
 	bb.Name         = "GeneratorLabel"
-	bb.Size         = UDim2.new(0, 150, 0, 55)
+	bb.Size         = UDim2.new(6, 0, 2, 0)  -- stud-based: shrinks naturally with distance
 	bb.StudsOffset  = Vector3.new(0, 2.5, 0)
 	bb.AlwaysOnTop  = false
 	bb.Parent       = part
