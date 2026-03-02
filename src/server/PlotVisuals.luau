@@ -153,6 +153,7 @@ local function decoratePlot(plotModel: Model)
 	ownerSign.Size        = UDim2.new(0, 190, 0, 75)
 	ownerSign.StudsOffset = Vector3.new(0, 3, 0)
 	ownerSign.AlwaysOnTop = false
+	ownerSign.MaxDistance = 80   -- hide sign beyond 80 studs to avoid overlap clutter
 	ownerSign.Parent      = signPost
 
 	local plotLabel = Instance.new("TextLabel")
